@@ -1,0 +1,4 @@
+INSERT INTO Advisor(name, firstname, address, city, postal_code, birth_date, email, phone, matricule, is_manager) VALUES
+('Dupont', 'Gerard', '14 rue Sainte Marie', 'Nancy', '54000', '1994-07-13', 'd.gerard@agency.com', '0768169535', '7c49121e-23bb-4edd-917f-1e4bcf7872fb', false),
+('Carisma', 'Sophie', '57 rue Fée clochette', 'Nancy', '54000', '1990-03-19', 'c.sophie@agency.com','0789654876', '81d0efe4-6f9b-4758-8a24-8e6a7f7ca595', false),
+('Druchet', 'Philippe', '144 rue ParkingStone', 'Nancy', '54000', '1976-09-15', 'd.philippe@agency.com', '0789876356', '49fb84d0-4936-4554-bd12-a98ea3724fa2', true) ON CONFLICT DO NOTHING;

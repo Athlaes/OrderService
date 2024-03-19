@@ -1,0 +1,11 @@
+version: '1'
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: business
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: superprotectedpassword
+    ports: 
+      - 15432:5432

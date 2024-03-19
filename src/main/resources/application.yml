@@ -1,0 +1,38 @@
+server.port : 8585
+
+application:
+  financeService:
+    url:
+      protocol: http
+      host: localhost
+      port: 8686
+
+spring :
+  application.name: order-service
+  sql:
+    init:
+      mode: always
+  cloud:
+    # disable consul
+    consul:
+      enabled: false
+  # pg connection
+  datasource:
+    url: jdbc:postgresql://localhost:15432/business
+    username: admin
+    password: superprotectedpassword
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: false
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
+
+
+
+
+  
+  
+  
+  
+  
