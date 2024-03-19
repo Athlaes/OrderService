@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import fr.athlaes.services.ord.application.port.incoming.RateService;
-import fr.athlaes.services.ord.application.service.exceptions.ResourceNotAccessible;
+import fr.athlaes.services.ord.application.service.exceptions.ResourceNotAccessibleException;
 import fr.athlaes.services.ord.domain.CreditOrderStatus;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.server.ExposesResourceFor;
@@ -57,7 +57,7 @@ public class CreditOrderController {
     
     @PatchMapping
     @Transactional
-    public ResponseEntity<CreditOrder> updateOrder(@RequestBody CreditOrder creditOrder) throws ResourceNotAccessible {
+    public ResponseEntity<CreditOrder> updateOrder(@RequestBody CreditOrder creditOrder) throws ResourceNotAccessibleException {
         return ResponseEntity.ok(this.creditOrderService.updateCreditOrder(creditOrder));
     }
 
@@ -86,7 +86,7 @@ public class CreditOrderController {
 
     @PatchMapping("/{id}/study/{status}")
     @Transactional
-    public ResponseEntity<CreditOrder> validateOrder(@PathVariable("id") UUID id, @PathVariable("status") TmpDecisionStatus status) throws ResourceNotAccessible {
+    public ResponseEntity<CreditOrder> validateOrder(@PathVariable("id") UUID id, @PathVariable("status") TmpDecisionStatus status) throws ResourceNotAccessibleException {
         // TODO : Use keycloak user to save who validated order
         CreditOrder res = this.creditOrderService.updateCreditOrderDecision(id, status);
         return ResponseEntity.ok(res);
@@ -94,7 +94,7 @@ public class CreditOrderController {
 
     @PatchMapping("/{id}/validation/{status}")
     @Transactional
-    public ResponseEntity<CreditOrder> finalValidateOrder(@PathVariable("id") UUID id, @PathVariable("status") TmpDecisionStatus status) throws ResourceNotAccessible {
+    public ResponseEntity<CreditOrder> finalValidateOrder(@PathVariable("id") UUID id, @PathVariable("status") TmpDecisionStatus status) throws ResourceNotAccessibleException {
         CreditOrder res = this.creditOrderService.validateCreditOrder(id, status);
         return ResponseEntity.ok(res);
     }

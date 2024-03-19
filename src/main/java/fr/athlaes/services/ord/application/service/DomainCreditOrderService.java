@@ -3,18 +3,16 @@ package fr.athlaes.services.ord.application.service;
 import fr.athlaes.services.ord.application.ddd.DomainService;
 import fr.athlaes.services.ord.application.port.incoming.AdvisorService;
 import fr.athlaes.services.ord.application.port.incoming.CreditOrderService;
-import fr.athlaes.services.ord.application.port.outgoing.AdvisorPersistence;
 import fr.athlaes.services.ord.application.port.outgoing.CreditOrderPersistence;
 import fr.athlaes.services.ord.application.port.outgoing.FinanceClient;
 import fr.athlaes.services.ord.application.port.outgoing.StatusHistoryPersistence;
 import fr.athlaes.services.ord.application.service.exceptions.ResourceAlreadyExistsException;
-import fr.athlaes.services.ord.application.service.exceptions.ResourceNotAccessible;
+import fr.athlaes.services.ord.application.service.exceptions.ResourceNotAccessibleException;
 import fr.athlaes.services.ord.application.service.exceptions.ResourceNotFoundException;
 import fr.athlaes.services.ord.domain.CreditOrder;
 import fr.athlaes.services.ord.domain.CreditOrderStatus;
 import fr.athlaes.services.ord.domain.StatusHistory;
 import fr.athlaes.services.ord.domain.TmpDecisionStatus;
-import fr.athlaes.services.ord.infrastructure.adapter.persistence.mapping.StatusHistoryEntity;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -54,9 +52,9 @@ public class DomainCreditOrderService implements CreditOrderService {
     }
 
     @Override
-    public CreditOrder updateCreditOrder(CreditOrder creditOrder) throws ResourceNotAccessible {
+    public CreditOrder updateCreditOrder(CreditOrder creditOrder) throws ResourceNotAccessibleException {
         if(!creditOrder.getStatus().equals(CreditOrderStatus.Début)) {
-            throw new ResourceNotAccessible("Resource cannot be updated anymore because it is being validated");
+            throw new ResourceNotAccessibleException("Resource cannot be updated anymore because it is being validated");
         }
 
         CreditOrder foundCreditOrder = this.repository.findById(creditOrder.getId())
@@ -83,10 +81,10 @@ public class DomainCreditOrderService implements CreditOrderService {
     }
 
     @Override
-    public CreditOrder updateCreditOrderDecision(UUID id, TmpDecisionStatus status) throws ResourceNotAccessible {
+    public CreditOrder updateCreditOrderDecision(UUID id, TmpDecisionStatus status) throws ResourceNotAccessibleException {
         CreditOrder creditOrder = this.repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
         if (!creditOrder.getStatus().equals(CreditOrderStatus.Etude)){
-            throw new ResourceNotAccessible("Resource decision can't be updated now. It is either not complete or being validated.");
+            throw new ResourceNotAccessibleException("Resource decision can't be updated now. It is either not complete or being validated.");
         }
         creditOrder.setDecisionStatus(status);
         creditOrder.setStatus(CreditOrderStatus.Validation);
@@ -95,13 +93,17 @@ public class DomainCreditOrderService implements CreditOrderService {
     }
 
     @Override
-    public CreditOrder validateCreditOrder(UUID id, TmpDecisionStatus status) throws ResourceNotAccessible {
+    public CreditOrder validateCreditOrder(UUID id, TmpDecisionStatus status) throws ResourceNotAccessibleException {
         CreditOrder creditOrder = this.repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
         if (!creditOrder.getStatus().equals(CreditOrderStatus.Validation)){
-            throw new ResourceNotAccessible("Resource decision can't be validated now.");
+            throw new ResourceNotAccessibleException("Resource decision can't be validated now.");
         }
         creditOrder.setDecisionStatus(status);
-        creditOrder.setStatus(CreditOrderStatus.Validation);
+        if (status.equals(TmpDecisionStatus.Acceptée)) {
+            creditOrder.setStatus(CreditOrderStatus.Acceptation);
+        } else {
+            creditOrder.setStatus(CreditOrderStatus.Rejet);
+        }
         this.repository.save(creditOrder);
         this.saveStatus(creditOrder);
         return creditOrder;
