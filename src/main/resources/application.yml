@@ -2,6 +2,7 @@ server.port : 8585
 
 application:
   financeService:
+    verificationEndpoint: /api/client/{clientId}/amount/{amountOverLast3Years}
     url:
       protocol: http
       host: localhost

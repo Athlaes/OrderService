@@ -17,7 +17,7 @@ public class CreditOrder {
     private Double salaryOverLast3Years;
     private Double askedAmount;
     private int monthDuration;
-    private CreditOrderStatus status = CreditOrderStatus.Début;
+    private CreditOrderStatus status = CreditOrderStatus.Debut;
     private TmpDecisionStatus decisionStatus;
     private Advisor advisor;
     private Double rate;

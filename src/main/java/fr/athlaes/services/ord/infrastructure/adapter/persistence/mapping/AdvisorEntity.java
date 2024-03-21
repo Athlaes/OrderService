@@ -1,14 +1,13 @@
 package fr.athlaes.services.ord.infrastructure.adapter.persistence.mapping;
 
 import fr.athlaes.services.ord.domain.Advisor;
-import fr.athlaes.services.ord.domain.Client;
-import fr.athlaes.services.ord.infrastructure.adapter.persistence.mapping.mapper.CreditMapper;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -62,6 +61,7 @@ public class AdvisorEntity {
     }
 
     public Advisor toDomain() {
-        return new Advisor(name, firstname, address, city, postalCode, birthDate, email, phone, matricule, isManager);
+        ModelMapper mapper = new ModelMapper();
+        return mapper.map(this, Advisor.class);
     }
 }

@@ -2,6 +2,8 @@ package fr.athlaes.services.ord.infrastructure.adapter.rest.client;
 
 import fr.athlaes.services.ord.application.port.outgoing.FinanceClient;
 import fr.athlaes.services.ord.infrastructure.config.properties.ApplicationConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -10,10 +12,12 @@ import java.util.UUID;
 
 @Service
 public class FinanceClientImpl implements FinanceClient {
-    RestClient client;
-    ApplicationConfiguration config;
+    private final Logger logger = LoggerFactory.getLogger(FinanceClientImpl.class);
 
-    String baseUrl;
+    private final RestClient client;
+    private final ApplicationConfiguration config;
+
+    private final String baseUrl;
 
     public FinanceClientImpl(RestClient restClient, ApplicationConfiguration config) {
         this.client = restClient;
@@ -25,13 +29,13 @@ public class FinanceClientImpl implements FinanceClient {
 
     @Override
     public boolean verifyDeclaration(UUID clientId, Double amountOverLast3Years) {
-        boolean validated = false;
         String endpoint = this.config.getFinanceService().getVerificationEndpoint();
         String result = this.client.get()
-                .uri(this.baseUrl + endpoint)
+                .uri(this.baseUrl + endpoint, clientId, amountOverLast3Years)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .body(String.class);
+        logger.info("successfully verified declaration for client {}", clientId);
         return "ok".equalsIgnoreCase(result);
     }
 }

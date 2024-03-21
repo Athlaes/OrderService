@@ -1,7 +1,7 @@
 package fr.athlaes.services.ord.domain;
 
 public enum CreditOrderStatus {
-    Début,
+    Debut,
     Etude,
     Validation,
     Acceptation,

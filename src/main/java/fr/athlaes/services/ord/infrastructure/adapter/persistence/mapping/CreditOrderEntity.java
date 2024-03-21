@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.modelmapper.ModelMapper;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -64,8 +65,7 @@ public class CreditOrderEntity {
     }
 
     public CreditOrder toDomain() {
-        return new CreditOrder(id, client.toDomain(), salaryOverLast3Years, askedAmount, monthDuration, status, decisionStatus,
-                Objects.nonNull(advisor) ? advisor.toDomain() : null,
-                rate, totalDue, totalPerMonth, financeValidation);
+        ModelMapper mapper = new ModelMapper();
+        return mapper.map(this, CreditOrder.class);
     }
 }

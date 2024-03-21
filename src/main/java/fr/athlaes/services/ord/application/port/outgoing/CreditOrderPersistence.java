@@ -19,4 +19,6 @@ public interface CreditOrderPersistence {
     CreditOrder save(CreditOrder order);
 
     void delete(CreditOrder order);
+
+    List<CreditOrder> findAllByClientId(UUID id);
 }

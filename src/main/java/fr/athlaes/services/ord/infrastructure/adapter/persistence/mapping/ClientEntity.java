@@ -5,16 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fr.athlaes.services.ord.domain.Client;
-import fr.athlaes.services.ord.infrastructure.adapter.persistence.mapping.mapper.CreditMapper;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.modelmapper.ModelMapper;
 
 @Entity
 @Getter
@@ -74,6 +72,7 @@ public class ClientEntity {
     }
 
     public Client toDomain() {
-        return new Client(name, firstname, address, city, postalCode, birthDate, currentJob, email, phone, id, CreditMapper.toDomain(creditOrder));
+        ModelMapper mapper = new ModelMapper();
+        return mapper.map(this, Client.class);
     }
 }

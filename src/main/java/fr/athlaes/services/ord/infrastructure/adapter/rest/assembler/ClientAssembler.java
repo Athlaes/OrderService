@@ -1,23 +1,22 @@
 package fr.athlaes.services.ord.infrastructure.adapter.rest.assembler;
 
 import fr.athlaes.services.ord.domain.Client;
-import fr.athlaes.services.ord.infrastructure.adapter.rest.controller.CreditOrderController;
+import fr.athlaes.services.ord.infrastructure.adapter.rest.controller.ClientController;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.stereotype.Component;
 
 import java.util.stream.StreamSupport;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+@Component
 public class ClientAssembler implements RepresentationModelAssembler<Client, EntityModel<Client>> {
     @Override
     public EntityModel<Client> toModel(Client entity) {
-        var model = EntityModel.of(entity);
-        model.add(linkTo(methodOn(CreditOrderController.class).getOne(entity.getId()))
-                .withRel("Get-order"));
-        return model;
+        return EntityModel.of(entity);
     }
 
     @Override
@@ -27,7 +26,7 @@ public class ClientAssembler implements RepresentationModelAssembler<Client, Ent
                 .map(this::toModel)
                 .toList();
         return CollectionModel.of(client,
-                linkTo(methodOn(CreditOrderController.class)
+                linkTo(methodOn(ClientController.class)
                         .getAll()).withSelfRel());
     }
 }

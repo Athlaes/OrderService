@@ -17,5 +17,7 @@ public interface CreditOrderService {
 
     CreditOrder validateCreditOrder(UUID id, TmpDecisionStatus status) throws ResourceNotAccessibleException;
 
+    CreditOrder submitCreditOrder(UUID id) throws ResourceNotAccessibleException;
 
+    boolean checkOrderCompletion(CreditOrder creditOrder);
 }

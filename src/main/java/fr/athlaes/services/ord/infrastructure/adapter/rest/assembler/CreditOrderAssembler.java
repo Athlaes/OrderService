@@ -5,23 +5,45 @@ import fr.athlaes.services.ord.domain.CreditOrder;
 import fr.athlaes.services.ord.domain.CreditOrderStatus;
 import fr.athlaes.services.ord.domain.TmpDecisionStatus;
 import fr.athlaes.services.ord.infrastructure.adapter.rest.controller.CreditOrderController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.stream.StreamSupport;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+@Component
 public class CreditOrderAssembler implements RepresentationModelAssembler<CreditOrder, EntityModel<CreditOrder>> {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Override
     public EntityModel<CreditOrder> toModel(CreditOrder order) {
-        EntityModel<CreditOrder> model = null;
+        var model = EntityModel.of(order);
         try {
-            model = this.toModelWithParameter(order, false);
+            switch (order.getStatus()) {
+                case CreditOrderStatus.Etude -> {
+                    model.add(linkTo(methodOn(CreditOrderController.class).validateOrder(order.getId(), TmpDecisionStatus.Refusee))
+                            .withRel("reject"));
+                    model.add(linkTo(methodOn(CreditOrderController.class).validateOrder(order.getId(), TmpDecisionStatus.Acceptee))
+                            .withRel("accept"));
+                }
+                case CreditOrderStatus.Validation -> {
+                    model.add(linkTo(methodOn(CreditOrderController.class).finalValidateOrder(order.getId(), TmpDecisionStatus.Refusee))
+                            .withRel("reject"));
+                    model.add(linkTo(methodOn(CreditOrderController.class).finalValidateOrder(order.getId(), TmpDecisionStatus.Acceptee))
+                            .withRel("accept"));
+                }
+                default -> {
+                    break;
+                }
+            }
         } catch (ResourceNotAccessibleException e) {
-            model = EntityModel.of(order);
+            logger.warn("La resource avec l'id {} n'a pas pu être mappé vers son modèle correctement", order.getId());
         }
         return model;
     }
@@ -32,43 +54,13 @@ public class CreditOrderAssembler implements RepresentationModelAssembler<Credit
                 .stream(entities.spliterator(), false)
                 .map(this::toModel)
                 .toList();
-        return CollectionModel.of(creditOrderModel,
-                linkTo(methodOn(CreditOrderController.class)
-                        .getAll()).withSelfRel());
-    }
-
-    public EntityModel<CreditOrder> toModelWithParameter(CreditOrder order, boolean includeLinkForAdvisors) throws ResourceNotAccessibleException {
-        var model = EntityModel.of(order);
-        switch (order.getStatus()) {
-            case CreditOrderStatus.Début -> {
-                model.add(linkTo(methodOn(CreditOrderController.class).getOne(order.getId()))
-                        .withRel("Get-order"));
-            }
-            case CreditOrderStatus.Etude -> {
-                model.add(linkTo(methodOn(CreditOrderController.class).getOne(order.getId()))
-                        .withRel("Get-order"));
-                if(includeLinkForAdvisors) {
-                    model.add(linkTo(methodOn(CreditOrderController.class).studyOrder(order.getId()))
-                            .withRel("Study"));
-                    model.add(linkTo(methodOn(CreditOrderController.class).validateOrder(order.getId(), TmpDecisionStatus.Refusée))
-                            .withRel("Study-reject"));
-                    model.add(linkTo(methodOn(CreditOrderController.class).validateOrder(order.getId(), TmpDecisionStatus.Acceptée))
-                            .withRel("Study-accept"));
-                }
-            }
-            case CreditOrderStatus.Validation -> {
-                model.add(linkTo(methodOn(CreditOrderController.class).getOne(order.getId()))
-                        .withRel("Get-order"));
-                if(includeLinkForAdvisors) {
-                    model.add(linkTo(methodOn(CreditOrderController.class).studyOrder(order.getId()))
-                            .withRel("Study"));
-                    model.add(linkTo(methodOn(CreditOrderController.class).finalValidateOrder(order.getId(), TmpDecisionStatus.Refusée))
-                            .withRel("Study-reject"));
-                    model.add(linkTo(methodOn(CreditOrderController.class).finalValidateOrder(order.getId(), TmpDecisionStatus.Acceptée))
-                            .withRel("Study-accept"));
-                }
-            }
+        var content = creditOrderModel.getFirst().getContent();
+        if (Objects.nonNull(content)) {
+            return CollectionModel.of(creditOrderModel,
+                    linkTo(methodOn(CreditOrderController.class)
+                            .advisorCurrentOrders(content.getAdvisor().getMatricule(), content.getStatus())).withSelfRel());
+        } else {
+            return CollectionModel.of(creditOrderModel);
         }
-        return model;
     }
 }

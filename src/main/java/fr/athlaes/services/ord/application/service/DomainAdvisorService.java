@@ -6,15 +6,22 @@ import fr.athlaes.services.ord.domain.Advisor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class DomainAdvisorService implements AdvisorService {
+    private final AdvisorPersistence repository;
+    private final Random rd;
 
-    private AdvisorPersistence repository;
+    public DomainAdvisorService(AdvisorPersistence repository) {
+        this.repository = repository;
+        this.rd = new Random();
+    }
+
 
     @Override
     public Advisor getRandomAdvisor() {
         List<Advisor> advisors = this.repository.findAll();
-        return advisors.get((int) (Math.random() * advisors.size()-1));
+        return advisors.get((this.rd.nextInt(1)));
     }
 }

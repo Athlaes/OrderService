@@ -46,6 +46,13 @@ public class CreditOrderRepository implements CreditOrderPersistence {
     }
 
     @Override
+    public List<CreditOrder> findAllByClientId(UUID id) {
+        return repository.findAllByClientId(id).stream()
+                .map(CreditOrderEntity::toDomain)
+                .toList();
+    }
+
+    @Override
     public List<CreditOrder> findByStatus(CreditOrderStatus creditOrderStatus) {
         return repository.findByStatus(creditOrderStatus).stream()
                 .map(CreditOrderEntity::toDomain)

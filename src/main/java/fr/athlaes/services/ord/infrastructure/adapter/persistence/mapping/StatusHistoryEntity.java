@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.modelmapper.ModelMapper;
 
 @Entity
 @Getter
@@ -43,9 +44,11 @@ public class StatusHistoryEntity {
         this.updateDate = statusUpdates.getUpdateDate();
         this.tmpDecisionStatus = statusUpdates.getTmpDecisionStatus();
         this.advisorId = statusUpdates.getAdvisorId();
+        this.creditOrderId = statusUpdates.getCreditOrderId();
     }
 
     public StatusHistory toDomain() {
-        return new StatusHistory(id, creditOrderId, update, updateDate, tmpDecisionStatus, advisorId);
+        ModelMapper mapper = new ModelMapper();
+        return mapper.map(this, StatusHistory.class);
     }
 }
