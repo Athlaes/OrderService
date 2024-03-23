@@ -1,7 +1,6 @@
 package fr.athlaes.services.ord.application.port.outgoing;
 
 import fr.athlaes.services.ord.domain.Advisor;
-import fr.athlaes.services.ord.domain.Client;
 
 import java.util.List;
 import java.util.Optional;

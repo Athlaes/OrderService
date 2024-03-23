@@ -51,6 +51,9 @@ public class DomainCreditOrderService implements CreditOrderService {
         creditOrder.setDecisionStatus(null);
         creditOrder.setStatus(CreditOrderStatus.Debut);
         creditOrder.setFinanceValidation(false);
+        creditOrder.setRate(0.0);
+        creditOrder.setTotalDue(0.0);
+        creditOrder.setTotalPerMonth(0.0);
 
         CreditOrder fCreditOrder;
         fCreditOrder = this.repository.save(creditOrder);

@@ -23,6 +23,10 @@ public class ClientOrderDTO extends RepresentationModel<ClientOrderDTO> {
     private Double askedAmount;
     private int monthDuration;
     private CreditOrderStatus status;
+    private Advisor advisor;
+    private Double rate;
+    private Double totalDue;
+    private Double totalPerMonth;
 
     public ClientOrderDTO(CreditOrder order) {
         this.id = order.getId();
@@ -31,6 +35,10 @@ public class ClientOrderDTO extends RepresentationModel<ClientOrderDTO> {
         this.askedAmount = order.getAskedAmount();
         this.monthDuration = order.getMonthDuration();
         this.status = order.getStatus();
+        this.rate = order.getRate();
+        this.totalDue = order.getTotalDue();
+        this.totalPerMonth = order.getTotalDue();
+        this.advisor = order.getAdvisor();
     }
 
     public CreditOrder toDomain() {
