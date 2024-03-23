@@ -3,10 +3,13 @@ package fr.athlaes.services.ord.infrastructure.adapter.rest.controller;
 import java.util.UUID;
 
 import fr.athlaes.services.ord.application.service.exceptions.ResourceNotAccessibleException;
+import fr.athlaes.services.ord.application.service.exceptions.ServiceNotAccesibleException;
 import fr.athlaes.services.ord.domain.CreditOrderStatus;
 import fr.athlaes.services.ord.infrastructure.adapter.rest.assembler.ClientCreditOrderAssembler;
 import fr.athlaes.services.ord.infrastructure.adapter.rest.assembler.CreditOrderAssembler;
 import fr.athlaes.services.ord.infrastructure.adapter.rest.dto.ClientOrderDTO;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -74,10 +77,17 @@ public class CreditOrderController {
 
     // TODO : Authent with keycloak
     @GetMapping("/{id}/study")
+    @CircuitBreaker(name = "orderservice")
+    @Retry(name = "orderservice", fallbackMethod = "fallbackFinance")
     public ResponseEntity<EntityModel<CreditOrder>> studyOrder(@PathVariable("id") UUID id) {
         // TODO : Use keycloak user to save who studied order
         CreditOrder res = this.creditOrderService.getCreditOrderWithFinanceValidation(id);
         return ResponseEntity.ok(this.creditOrderAssembler.toModel(res));
+    }
+
+    private ResponseEntity<EntityModel<CreditOrder>> fallbackFinance(RuntimeException re) {
+        // TODO : try moving it into the client rather than in the controller
+        throw new ServiceNotAccesibleException("Impossible de contacter le service finance");
     }
 
     // TODO : Authent with keycloak
