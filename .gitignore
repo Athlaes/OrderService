@@ -1,33 +1,51 @@
-HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+order-service/.mvn/
+order-service/**/src/main/**/target/
+order-service/**/src/test/**/target/
+order-service/target/
+order-service/.apt_generated
+order-service/.classpath
+order-service/.factorypath
+order-service/.project
+order-service/.settings
+order-service/.springBeans
+order-service/.sts4-cache
+order-service/.idea
+order-service/*.iws
+order-service/*.iml
+order-service/*.ipr
+order-service/nbproject/private/
+order-service/nbbuild/
+order-service/dist/
+order-service/nbdist/
+order-service/.nb-gradle/
+order-service/build/
+order-service/!**/src/main/**/build/
+order-service/!**/src/test/**/build/
+order-service/.vscode/
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+finance-service/.mvn/
+finance-service/**/src/main/**/target/
+finance-service/**/src/test/**/target/
+finance-service/target/
+finance-service/.apt_generated
+finance-service/.classpath
+finance-service/.factorypath
+finance-service/.project
+finance-service/.settings
+finance-service/.springBeans
+finance-service/.sts4-cache
+finance-service/.idea
+finance-service/*.iws
+finance-service/*.iml
+finance-service/*.ipr
+finance-service/nbproject/private/
+finance-service/nbbuild/
+finance-service/dist/
+finance-service/nbdist/
+finance-service/.nb-gradle/
+finance-service/build/
+finance-service/!**/src/main/**/build/
+finance-service/!**/src/test/**/build/
+finance-service/.vscode/
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
-.vscode/

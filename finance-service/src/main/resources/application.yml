@@ -1,0 +1,22 @@
+spring :
+  application.name: finance-service
+  config:
+    import: 'consul:'
+  sql:
+    init:
+      mode: always
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        register-health-check: false
+
+
+
+
+
+
+
+
+
